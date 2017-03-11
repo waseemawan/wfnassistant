@@ -1,2 +1,2 @@
 # wfnassistant
-my bot test project
+This is my test bot for experiment.
