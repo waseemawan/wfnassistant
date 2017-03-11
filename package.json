@@ -1,0 +1,29 @@
+{
+  "name": "wfnassistant",
+  "version": "1.0.0",
+  "description": "WFN Assistant Bot",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start" : "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/waseemawan/wfnassistant.git"
+  },
+  "keywords": [
+    "bot",
+    "wfnassistant"
+  ],
+  "author": "Waseem Awan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/waseemawan/wfnassistant/issues"
+  },
+  "homepage": "https://github.com/waseemawan/wfnassistant#readme",
+  "dependencies": {
+    "botbuilder": "^3.7.0",
+    "https": "^1.0.0",
+    "restify": "^4.3.0"
+  }
+}
