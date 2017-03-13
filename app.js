@@ -241,7 +241,7 @@ intents.matches(/^access employee profile/i, [
     },
     function (session, args, next) {
         //session.send('Ok.. Link of the time card for ' + session.userData.timecardFor);
-        if (session.userData.timecardFor == 'Shah') {
+        if (session.userData.timecardFor == 'Anthony') {
             //sendLink(session, 'www.yahoo.com');
             var loggedInUser = defaultEmployees[session.userData.timecardFor];
             var card = getSelectedEmployeeProfile(session , loggedInUser);
