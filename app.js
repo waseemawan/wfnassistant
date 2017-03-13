@@ -20,6 +20,14 @@ var employeesData = {
         jobTitle : 'Cashier'
 
     },
+    "Adams Amy": {
+        name:"Adams Amy" ,
+        employeeId: "ID00005" ,
+        regularHours : 30 ,
+        ptoHours : 20 ,
+        totalHours : 50,
+        jobTitle : 'Manager'
+    },
     "Adams BB": {
         name:"Adams BB" ,
         employeeId: "ID00002",
@@ -43,18 +51,19 @@ var employeesData = {
         ptoHours : 15 ,
         totalHours : 95,
         jobTitle : 'Assistant'
-    },
-    "Adams Richard": {
-        name:"Adams Richard" ,
-        employeeId: "ID00005" ,
-        regularHours : 30 ,
-        ptoHours : 20 ,
-        totalHours : 50,
-        jobTitle : 'Manager'
     }
 };
 
 var defaultEmployees = {
+
+    "Anthony": {
+        name:"Anthony Albright" ,
+        employeeId: "ID00007" ,
+        regularHours : 40 ,
+        ptoHours : 30 ,
+        totalHours : 70,
+        jobTitle : 'Cashier'        
+    },
     "Waseem": {
         name:"Waseem Awan" ,
         employeeId: "ID00006" ,
@@ -62,14 +71,6 @@ var defaultEmployees = {
         ptoHours : 20 ,
         totalHours : 95,
         jobTitle : 'Manager' 
-    },
-    "Shah": {
-        name:"Shah Nawaz" ,
-        employeeId: "ID00007" ,
-        regularHours : 40 ,
-        ptoHours : 30 ,
-        totalHours : 70,
-        jobTitle : 'Cashier'        
     }
     
 };
@@ -90,40 +91,6 @@ var connector = new builder.ChatConnector({
 });
 
 server.post('/api/messages', connector.listen());
-
-server.get('/logo', function(req, res, next) {
-  fs.readFile('./static/logo_ADP_assist.jpg', function(err, file) {
-    if (err) {
-      res.send(500);
-      return next();
-    }
-    res.write(file);
-    res.send({
-      code: 200,
-      noEnd: true
-    });
-    
-    res.end();
-    return next();
-  });
-});
-
-server.get('/profile', function(req, res, next) {
-  fs.readFile('./static/profileAdam.png', function(err, file) {
-    if (err) {
-      res.send(500);
-      return next();
-    }
-    res.write(file);
-    res.send({
-      code: 200,
-      noEnd: true
-    });
-    
-    res.end();
-    return next();
-  });
-});
 
 var bot = new builder.UniversalBot(connector);
 
@@ -158,22 +125,17 @@ intents.matches(/^open timecard/i, [
         session.beginDialog('/opentimecard');
     },
     function (session, args, next) {
-        //session.send('Ok.. Link of the time card for ' + session.userData.timecardFor);
-        if (session.userData.timecardFor == 'Shah') {
-            //sendLink(session, 'www.yahoo.com');
+        if (session.userData.timecardFor == 'Anthony') {
             var loggedInUser = defaultEmployees[session.userData.timecardFor];
             var card = getSelectedEmployeeCard(session , loggedInUser);
             var msg = new builder.Message(session).addAttachment(card);
             session.send(msg);
         } else if (session.userData.timecardFor == 'Adams') {
-            //sendLink(session , args , 'Found mutiple users with matching namr : Waseem A , Waseem B' , false) ;            
             session.beginDialog('/checkUserInput') ;     
         } else {
             session.send("Employee not found in system");
         }
-    }
-
-    
+    }    
 ]);
 
 intents.onDefault([
@@ -181,21 +143,21 @@ intents.onDefault([
         if (!session.userData.name) {         
             var card = new builder.HeroCard(session) 
              .title("") 
-             .text("Hi! How can I help today? \n You can ask me questions such as open my timecard or access employee profile.") 
+             .text("Hi! How can I help today? \n You can ask me questions such as 'open my timecard' or 'access employee profile'.") 
              .images([ 
-                  builder.CardImage.create(session, "https://wfnassistantbot.azurewebsites.net/logo" ) 
+                  builder.CardImage.create(session, "https://raw.githubusercontent.com/waseemawan/wfnassistant/master/static/logo_ADP_assist.jpg" ) 
              ]); 
              //"http://www.masseyconsulting.net/wp-content/uploads/2016/03/ADPRedLogowTag_RGB_Left_updated.jpg"
          var msg = new builder.Message(session).attachments([card]); 
          session.send(msg); 
          //session.send("Hi... I'm the WFN Assistant bot for");    
-            session.beginDialog('/welcome');
+         session.beginDialog('/welcome');
        } else {
             next();
         }
     },
     function (session, results) {
-        session.send('Ooops, didnt get you , please try again');
+        session.send('Ooops, I didn\'t get you, please try again.');
     }
 ]);
 
@@ -226,7 +188,7 @@ bot.dialog('/opentimecard', [
 
 bot.dialog('/checkUserInput', [
     function (session) {                
-        builder.Prompts.choice(session, "We found more than one matches", employeesData , {
+        builder.Prompts.choice(session, "We found more than one matches, please pick one", employeesData , {
             maxRetries: 3, 
         retryPrompt: 'Ooops, what you entered is not an option, please try again' 
         });         
@@ -267,7 +229,7 @@ function getSelectedEmployeeCard(session , selectedEmployee) {
         ])        
         .total(selectedEmployee.totalHours)
         .buttons([
-            builder.CardAction.openUrl(session, 'javascript:alert("timecard");', 'Full TimeCard')
+            builder.CardAction.openUrl(session, 'https://wfn-fit.nj.adp.com/portal/admin.jsp#/MyTeam_ttd_MyTeamTabTimeAttendanceCategoryTLMWebIndividualTimeCard/MyTeamTabTimeAttendanceCategoryTLMWebIndividualTimeCard', 'Full TimeCard')
                 .image('https://raw.githubusercontent.com/amido/azure-vector-icons/master/renders/microsoft-azure.png')
         ]);
 }
@@ -339,10 +301,10 @@ function getSelectedEmployeeProfileCard(session , selectedEmployee) {
          .subtitle('Job Title : ' + selectedEmployee.jobTitle) 
          .text('Position ID : ' + selectedEmployee.employeeId) 
          .images([ 
-             builder.CardImage.create(session, 'https://wfnassistantbot.azurewebsites.net/profile') 
+             builder.CardImage.create(session, 'https://raw.githubusercontent.com/waseemawan/wfnassistant/master/static/profileAdam.png') 
          ]) 
          .buttons([ 
-             builder.CardAction.openUrl(session, 'https://docs.botframework.com/en-us/', 'Full Profile') 
+             builder.CardAction.openUrl(session, 'https://wfn-fit.nj.adp.com/wfn/chr/core/employee/personal/personalProfile.faces', 'Full Profile') 
          ]); 
 
 }
